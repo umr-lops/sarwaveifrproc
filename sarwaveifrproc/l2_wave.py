@@ -200,8 +200,9 @@ def format_dataset(ds, predictions, predicted_variables, kept_variables, bins):
         attributes = get_attributes(v)
         v_mid = xr.DataArray(data = (bins[v][:-1] + bins[v][1:])/2, dims = f'{v}_mid')
         v_mid.attrs = attributes['mid']
-        
-        v_pdf = special.softmax(predictions[i], axis=1).rename(f'{v}_pdf').assign_coords({f'{v}_mid': v_mid}).to_dataset()
+
+        v_pdf = xr.apply_ufunc(lambda x: special.softmax(x, axis=1),
+                               predictions[i]).rename(f'{v}_pdf').assign_coords({f'{v}_mid': v_mid}).to_dataset()
         v_pdf[f'{v}_pdf'].attrs = attributes['pdf']
         data_to_merge.append(v_pdf)
         
