@@ -1,0 +1,10 @@
+model_intraburst: 'model_intraburst.keras'
+model_interburst: 'model_interburst.keras'
+scaler_intraburst: 'scaler_intraburst.npy'
+scaler_interburst: 'scaler_interburst.npy'
+bins_intraburst: 'bins_intraburst'
+bins_interburst: 'bins_interburst'
+predicted_variables:
+                    - 'hs'
+                    - 'phs0'
+                    - 't0m1'

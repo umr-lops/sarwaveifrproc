@@ -1,30 +1,27 @@
 [project]
 name = "sarwaveifrproc"
 requires-python = ">= 3.9"
-description = "Python library to generate Level-2 WAVE Product starting from Ifremer Level-1B SAR files"
+description = "Python library to generate Level-2 WAVE Product starting from Ifremer Level-1B or Level-1C SAR files"
 readme.file = "README.md"
 readme.content-type = "text/markdown"
 license = {text = "MIT"}
 keywords = ["SAR", "wave", "reseach","sea-state"]
 authors = [
+  {name = "Robin Marquart"},
   {name = "Antoine Grouazel"}
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
 ]
 dependencies = [
-    'PyYAML',
     "xarray",
-    "numpy",
     "netCDF4",
-    "shapely",
-    "xarray-datatree",
-    'tqdm',
-    "zarr",
-    'fsspec',
-    'scipy',
-    'aiohttp',
-]
+    "pyyaml",
+    "scipy",
+    "tensorflow",
+    "xarray-datatree"
+    ]
+
 dynamic = ["version"]
 
 [build-system]
@@ -45,3 +42,4 @@ default_section = "THIRDPARTY"
 known_first_party = "sarwaveifrproc"
 
 [project.scripts]
+L2-wave-processor = "sarwaveifrproc.main:main"
