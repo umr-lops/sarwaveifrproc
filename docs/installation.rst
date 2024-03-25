@@ -1,8 +1,8 @@
 .. highlight:: shell
 
-============
+############
 Installation
-============
+############
 
 
 Stable release
@@ -49,3 +49,8 @@ Once you have a copy of the source, you can install it with:
 
 .. _Github repo: https://github.com/agrouaze/sarwaveifrproc
 .. _tarball: https://github.com/agrouaze/sarwaveifrproc/tarball/master
+
+
+.. raw:: latex
+
+    \newpage
