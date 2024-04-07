@@ -156,7 +156,7 @@ def process_files(input_safe, output_safe, model_intraburst, model_interburst, s
     Returns:
         None
     """
-    subswath_filenames = glob.glob(os.path.join(input_safe, '*-vv-*.nc'))
+    subswath_filenames = glob.glob(os.path.join(input_safe, '*-?v-*.nc'))
     logging.info(f'{len(subswath_filenames)} subswaths found in given safe.')
     
     for path in subswath_filenames:
