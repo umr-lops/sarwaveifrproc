@@ -39,6 +39,7 @@ def get_output_safe(l1x_safe, root_savepath, tail='E00'):
     Raises:
         ValueError: If the input SAFE does not meet the filename requirements.
     """
+    l1x_safe = l1x_safe.rstrip('/') # remove trailing slash
     safe = l1x_safe.split(os.sep)[-1]
     final_safe = safe
     
