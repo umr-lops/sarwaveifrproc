@@ -28,13 +28,9 @@ def parse_args():
     # Other arguments
     parser.add_argument("--overwrite", action="store_true", default=False, help="overwrite the existing outputs")
     parser.add_argument("--verbose", action="store_true", default=False)
-
-    if '--help' in sys.argv or '-h' in sys.argv:
-        parser.print_help()
-        sys.exit(0)
-    else:   
-        args = parser.parse_args()
-        return args
+   
+    args = parser.parse_args()
+    return args
 
 def main():
     

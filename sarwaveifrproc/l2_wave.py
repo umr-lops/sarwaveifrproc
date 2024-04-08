@@ -64,6 +64,7 @@ def generate_intermediate_product(ds, model, scaler, bins, predicted_variables, 
     
     if '2tau' in ds.dims:
         ds = ds.squeeze(dim='2tau')
+        ds.attrs['squeezed_dimensions']='2tau'
     
     tiles = ds[['sigma0_filt', 'normalized_variance_filt',  'incidence', 'azimuth_cutoff', 'cwave_params']]
     tiles_stacked = tiles.stack(all_tiles = ['burst', 'tile_line','tile_sample'], k_phi = ['phi_hf', 'k_gp'])
