@@ -67,7 +67,10 @@ def generate_intermediate_product(ds, model, scaler, bins, predicted_variables, 
         ds.attrs['squeezed_dimensions']='2tau'
     
     tiles = ds[['sigma0_filt', 'normalized_variance_filt',  'incidence', 'azimuth_cutoff', 'cwave_params']]
-    tiles_stacked = tiles.stack(all_tiles = ['burst', 'tile_line','tile_sample'], k_phi = ['phi_hf', 'k_gp'])
+    if 'burst' in ds.coords:
+        tiles_stacked = tiles.stack(all_tiles = ['burst', 'tile_line','tile_sample'], k_phi = ['phi_hf', 'k_gp'])
+    else:
+        tiles_stacked = tiles.stack(all_tiles = ['tile_line','tile_sample'], k_phi = ['phi_hf', 'k_gp'])
             
     output_dims = [['all_tiles', f'{v}_mid'] for v in predicted_variables]
     inds = np.cumsum([0] + [len(bins[v]) -1 for v in predicted_variables])
