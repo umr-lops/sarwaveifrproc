@@ -35,9 +35,13 @@ def parse_args():
 def main():
     
     args = parse_args()
-    
+    fmt = '%(asctime)s %(levelname)s %(filename)s(%(lineno)d) %(message)s'
     if args.verbose:
-        logging.basicConfig(level=logging.INFO)
+        logging.basicConfig(level=logging.DEBUG, format=fmt,
+                            datefmt='%d/%m/%Y %H:%M:%S',force=True)
+    else:
+        logging.basicConfig(level=logging.INFO, format=fmt,
+                            datefmt='%d/%m/%Y %H:%M:%S',force=True)
     
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # Suppress TensorFlow INFO and WARNING messages
     os.environ['CUDA_VISIBLE_DEVICES'] = '-1'  # Hide CUDA devices

@@ -1,8 +1,9 @@
 import numpy as np
+import os
 import xarray as xr
 import datatree as dtt
 from scipy import special
-
+import sarwaveifrproc
 
 attributes_missing_variables = \
 {
@@ -35,11 +36,11 @@ def generate_l2_wave_product(xdt, intraburst_model, interburst_model, intraburst
     """
 
     kept_variables = ['corner_longitude', 'corner_latitude', 'land_flag', 'sigma0_filt', 'normalized_variance_filt', 'incidence', 'azimuth_cutoff', 'cwave_params']
-    
     ds_intraburst = generate_intermediate_product(xdt['intraburst'].ds, intraburst_model, intraburst_scaler, intraburst_bins, predicted_variables, kept_variables)
     ds_interburst = generate_intermediate_product(xdt['interburst'].ds, interburst_model, interburst_scaler, interburst_bins, predicted_variables, kept_variables)
     
     l2_wave_product = dtt.DataTree.from_dict({"intraburst": ds_intraburst, "interburst": ds_interburst})
+    l2_wave_product.attrs['input_sar_product'] = os.path.basename(xdt.encoding['source'])
     return l2_wave_product
 
 
@@ -230,7 +231,8 @@ def format_dataset(ds, predictions, predicted_variables, kept_variables, bins):
     
     ds = xr.merge([ds] + data_to_merge)
     ds = ds.drop_vars(['tile_line', 'tile_sample'])        
-    
+    ds.attrs['l2_processor_name'] = 'sarwaveifrproc'
+    ds.attrs['l2_processor_version'] = sarwaveifrproc.__version__
     ds.attrs.pop('name', None)
     ds.attrs.pop('multidataset', None)
     
