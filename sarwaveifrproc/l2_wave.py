@@ -2,7 +2,7 @@ import numpy as np
 import xarray as xr
 import datatree as dtt
 from scipy import special
-
+import sarwaveifrproc
 
 attributes_missing_variables = \
 {
@@ -230,7 +230,8 @@ def format_dataset(ds, predictions, predicted_variables, kept_variables, bins):
     
     ds = xr.merge([ds] + data_to_merge)
     ds = ds.drop_vars(['tile_line', 'tile_sample'])        
-    
+    ds.attrs['l2_processor_name'] = 'sarwaveifrproc'
+    ds.attrs['l2_processor_version'] = sarwaveifrproc.__version__
     ds.attrs.pop('name', None)
     ds.attrs.pop('multidataset', None)
     
