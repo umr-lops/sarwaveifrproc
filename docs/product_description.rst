@@ -30,7 +30,11 @@ SAFE naming convention
 
 Each product is stored in a .SAFE directory. The SAFE convention is inherited from Sentinel-1 mission and in particular from the Level-1 SLC. The SLC (single look complex) acronym has been replaced by WAV (for waves as the main goal of the product is to provide sea state parameters).
 
-Each .SAFE directory contains only netCDF files. There is one safe file per sub-swath (can be 1, 3 or 5 depending on acquisition mode, respectively, WV, EW and IW).
+Each .SAFE directory contains only netCDF files.
+
+There is one SAFE file per slice and one .nc file per sub-swath.
+
+There are 3 netCDF files for IW and 5 for EW. For WV there are as many netCDF files are measurement in the Level-1 SLC product.
 
 The netCDF naming convention is also very close to the ESA convention for the naming of the measurement files including in the Level-1 SLC .SAFE directories.
 
@@ -44,9 +48,9 @@ measurement naming convention
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 An example of L2 WAV measurement filename is
 
-l2-s1a-iw1-wav-vv-20231103t063230-20231103t063255-051049-0627c3-004-e00.nc
+l2-s1a-iw1-wav-dv-20231103t063230-20231103t063255-051049-0627c3-e00.nc
 
-where `l2` gives the processing level, `wav` describe the product family; `dv` the polarization configuration for the acquisition (indepently of how the channels are used in the file itself).
+where `l2` gives the processing level, `wav` describe the product family; `dv` the polarization configuration for the acquisition (independently of how the channels are used in the file itself).
 `e00` is a product version, it means: a processor version + options of processing. The same are the one given at the end of the SAFE name.
 
 
