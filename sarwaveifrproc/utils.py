@@ -6,6 +6,7 @@ import glob
 import logging
 import yaml 
 import pickle
+import re
 import os
 from datetime import datetime
 from sarwaveifrproc.l2_wave import generate_l2_wave_product
@@ -49,7 +50,15 @@ def get_output_safe(l1x_safe, root_savepath, tail='E00'):
 
         final_safe = final_safe.replace('XSP_', 'WAV_')
         final_safe = final_safe.replace('1SDV', '2SDV')
-        final_safe = final_safe.replace('.SAFE', f'_{tail.upper()}.SAFE')
+        regexA = re.compile("A[0-9]{2}.SAFE")
+        regexB = re.compile("B[0-9]{2}.SAFE")
+        if  re.search(regexA, final_safe.split('_')[-1]) or re.search(regexB, final_safe.split('_')[-1]):
+            print('match regexp')
+            final_safe = final_safe.replace(final_safe.split('_')[-1], f'{tail.upper()}.SAFE')
+        else:
+            print('no slug existing-> just add the product ID')
+            final_safe = final_safe.replace('.SAFE', f'_{tail.upper()}.SAFE')
+
         
         output_safe = os.path.join(root_savepath, date.strftime('%Y'), date.strftime('%j'), final_safe)
 
@@ -72,8 +81,18 @@ def get_output_filename(l1x_path, output_safe, tail='e00'):
     """
     filename = l1x_path.split(os.sep)[-1]
     filename_exploded = filename.split('-')
-    final_filename = '-'.join([*filename_exploded[:3], 'dv', *filename_exploded[4:-1], f'{tail.lower()}.nc'])
-    
+    regex_file_number = re.compile("[0-9]{2}[0-6]")
+    if filename[0:2]=='l1':
+        final_filename = '-'.join([*filename_exploded[:4], 'dv', *filename_exploded[5:-1], f'{tail.lower()}.nc'])
+        if re.search(regex_file_number,final_filename.split('-')[9]):
+            final_filename = final_filename.replace(final_filename.split('-')[9]+'-','') #remove the -004- giving the number of the file
+    else:
+        final_filename = '-'.join([*filename_exploded[:3], 'dv', *filename_exploded[4:-1], f'{tail.lower()}.nc'])
+        if re.search(regex_file_number,final_filename.split('-')[8]):
+            final_filename = final_filename.replace(final_filename.split('-')[8]+'-','') #remove the -004- giving the number of the file
+    final_filename = final_filename.replace('l1b','l2')
+    final_filename = final_filename.replace('l1c','l2')
+    final_filename = final_filename.replace('xsp','wav')
     savepath = os.path.join(output_safe, final_filename)
     return savepath
 
@@ -101,24 +120,24 @@ def load_models(paths, predicted_variables):
     Loads models, scalers, and bins necessary for prediction.
 
     Parameters:
-    paths (dict): Dictionary containing paths to model files, scaler files, and bin files.
-        Keys:
-            - 'model_intraburst': Path to the intraburst model file.
-            - 'model_interburst': Path to the interburst model file.
-            - 'scaler_intraburst': Path to the intraburst scaler file.
-            - 'scaler_interburst': Path to the interburst scaler file.
-            - 'bins_intraburst': Path to the intraburst bins directory.
-            - 'bins_interburst': Path to the interburst bins directory.
-    predicted_variables (list): List of variable names to be predicted.
+        paths (dict): Dictionary containing paths to model files, scaler files, and bin files.
+            Keys:
+                - 'model_intraburst': Path to the intraburst model file.
+                - 'model_interburst': Path to the interburst model file.
+                - 'scaler_intraburst': Path to the intraburst scaler file.
+                - 'scaler_interburst': Path to the interburst scaler file.
+                - 'bins_intraburst': Path to the intraburst bins directory.
+                - 'bins_interburst': Path to the interburst bins directory.
+        predicted_variables (list): List of variable names to be predicted.
+    Returns:
+        tuple: Tuple containing the following items:
+            - model_intraburst (tf.keras.Model): Intraburst model loaded from the provided path.
+            - model_interburst (tf.keras.Model): Interburst model loaded from the provided path.
+            - scaler_intraburst (RobustScaler): Intraburst scaler loaded from the provided path.
+            - scaler_interburst (RobustScaler): Interburst scaler loaded from the provided path.
+            - bins_intraburst (dict): Dictionary containing intraburst bins for each predicted variable.
+            - bins_interburst (dict): Dictionary containing interburst bins for each predicted variable.
 
-Returns:
-    tuple: Tuple containing the following items:
-        - model_intraburst (tf.keras.Model): Intraburst model loaded from the provided path.
-        - model_interburst (tf.keras.Model): Interburst model loaded from the provided path.
-        - scaler_intraburst (RobustScaler): Intraburst scaler loaded from the provided path.
-        - scaler_interburst (RobustScaler): Interburst scaler loaded from the provided path.
-        - bins_intraburst (dict): Dictionary containing intraburst bins for each predicted variable.
-        - bins_interburst (dict): Dictionary containing interburst bins for each predicted variable.
     """    
     # Unpack paths
     path_model_intraburst, path_model_interburst, path_scaler_intraburst, path_scaler_interburst, path_bins_intraburst, path_bins_interburst = paths.values()

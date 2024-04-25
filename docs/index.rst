@@ -1,5 +1,11 @@
 Welcome to sarwaveifrproc's documentation!
-======================================
+==========================================
+
+.. image:: ./figures/cover.png
+  :alt: cover
+  :scale: 100 %
+  :name: cover
+  :align: center
 
 .. toctree::
    :maxdepth: 2
@@ -8,6 +14,9 @@ Welcome to sarwaveifrproc's documentation!
    readme
    installation
    usage
+   product_description
+   atbd
+   bibliography
    modules
    contributing
    authors

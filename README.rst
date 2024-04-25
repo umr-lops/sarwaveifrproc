@@ -20,7 +20,7 @@ sarwaveifrproc
 
 
 
-SAR sea state Ifremer processor
+SAR Sentinel-1 ESA mission sea state Ifremer processor
 
 
 * Free software: MIT license
@@ -30,7 +30,11 @@ SAR sea state Ifremer processor
 Features
 --------
 
-* TODO
+ * predicts sea state geophysical quantities from Level-1B or Level-1C Ifremer SARWAVE Sentinel-1 (WV,IW,EW) products using empirical function learnt on numerical hindcasts (WAVEWATCH III):
+  - significant wave height (`Hs`)
+  - mean wave period (`t0m1`)
+  - significant wave height of the wind-sea (`pshs0`)
+ * save results in a netCDF file per sub-swath.
 
 Credits
 -------
