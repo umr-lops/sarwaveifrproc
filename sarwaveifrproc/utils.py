@@ -120,24 +120,24 @@ def load_models(paths, predicted_variables):
     Loads models, scalers, and bins necessary for prediction.
 
     Parameters:
-    paths (dict): Dictionary containing paths to model files, scaler files, and bin files.
-        Keys:
-            - 'model_intraburst': Path to the intraburst model file.
-            - 'model_interburst': Path to the interburst model file.
-            - 'scaler_intraburst': Path to the intraburst scaler file.
-            - 'scaler_interburst': Path to the interburst scaler file.
-            - 'bins_intraburst': Path to the intraburst bins directory.
-            - 'bins_interburst': Path to the interburst bins directory.
-    predicted_variables (list): List of variable names to be predicted.
+        paths (dict): Dictionary containing paths to model files, scaler files, and bin files.
+            Keys:
+                - 'model_intraburst': Path to the intraburst model file.
+                - 'model_interburst': Path to the interburst model file.
+                - 'scaler_intraburst': Path to the intraburst scaler file.
+                - 'scaler_interburst': Path to the interburst scaler file.
+                - 'bins_intraburst': Path to the intraburst bins directory.
+                - 'bins_interburst': Path to the interburst bins directory.
+        predicted_variables (list): List of variable names to be predicted.
+    Returns:
+        tuple: Tuple containing the following items:
+            - model_intraburst (tf.keras.Model): Intraburst model loaded from the provided path.
+            - model_interburst (tf.keras.Model): Interburst model loaded from the provided path.
+            - scaler_intraburst (RobustScaler): Intraburst scaler loaded from the provided path.
+            - scaler_interburst (RobustScaler): Interburst scaler loaded from the provided path.
+            - bins_intraburst (dict): Dictionary containing intraburst bins for each predicted variable.
+            - bins_interburst (dict): Dictionary containing interburst bins for each predicted variable.
 
-Returns:
-    tuple: Tuple containing the following items:
-        - model_intraburst (tf.keras.Model): Intraburst model loaded from the provided path.
-        - model_interburst (tf.keras.Model): Interburst model loaded from the provided path.
-        - scaler_intraburst (RobustScaler): Intraburst scaler loaded from the provided path.
-        - scaler_interburst (RobustScaler): Interburst scaler loaded from the provided path.
-        - bins_intraburst (dict): Dictionary containing intraburst bins for each predicted variable.
-        - bins_interburst (dict): Dictionary containing interburst bins for each predicted variable.
     """    
     # Unpack paths
     path_model_intraburst, path_model_interburst, path_scaler_intraburst, path_scaler_interburst, path_bins_intraburst, path_bins_interburst = paths.values()

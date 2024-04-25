@@ -40,18 +40,22 @@ The netCDF naming convention is also very close to the ESA convention for the na
 
 An example of L2 WAV filename is
 
-S1A_IW_WAV__2SDV_20231103T063230_20231103T063257_051049_0627C3_C45D_E00.SAFE
+.. code-block::
 
-, where `E00` define a product version, it means: a processor version + options of processing
+    S1A_IW_WAV__2SDV_20231103T063230_20231103T063257_051049_0627C3_C45D_E00.SAFE
+
+, where :math:`E00` define a product version, it means: a processor version + options of processing
 
 measurement naming convention
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 An example of L2 WAV measurement filename is
 
-l2-s1a-iw1-wav-dv-20231103t063230-20231103t063255-051049-0627c3-e00.nc
+.. code-block::
 
-where `l2` gives the processing level, `wav` describe the product family; `dv` the polarization configuration for the acquisition (independently of how the channels are used in the file itself).
-`e00` is a product version, it means: a processor version + options of processing. The same are the one given at the end of the SAFE name.
+    l2-s1a-iw1-wav-dv-20231103t063230-20231103t063255-051049-0627c3-e00.nc
+
+where :math:`l2` gives the processing level, :math:`wav` describe the product family; :math:`dv` the polarization configuration for the acquisition (independently of how the channels are used in the file itself).
+:math:`e00` is a product version, it means: a processor version + options of processing. The same are the one given at the end of the SAFE name.
 
 
 
@@ -64,38 +68,81 @@ For a specific slice and subswath, the two grids (defined during the processing 
      - **intraburst** grid is defined by a set of tiles within each burst. Several looks are then extracted, and associated cross-spectra are computed from these looks. The maximum tile size is approximately 17 by 17 km, depending on the processing parameters.
      - **interburst** grid is defined by a set of tiles that match the overlapping area between two adjacent bursts. The signals from these two bursts are then used as two different looks to compute cross-spectra. The maximum tile size is about 2 km (azimuth) by 17 km (range), depending on the processing parameters.
 
-Figure~\ref{fig:grids} illustrates the two grids for a set of 10 consecutive Level-2 products.
+Figure \ref{fig:level2_variables_grids} illustrates the two grids for a set of 10 consecutive Level-2 products.
 Geopĥysical parameters are estimated independently for all tiles on the two grids
 
-\begin{figure}[!ht]
-\centering
-   \includegraphics[width=32pc]{level2_variables_grids.png}
-   \caption{Example of Level-2 products coverage and tiling for the intra- (left panel) and inter- (right panel) burst grids in the case of 10 consecutive products acquired on 2021/02/27 from 18:36:06 UTC to 18:40:01 UTC over north east Atlantic ocean.}
-   \label{fig:grids}
-\end{figure}
 
-
+.. image:: ./figures/level2_variables_grids.png
+  :alt: level2_variables_grids
+  :scale: 70 %
+  :name: level2_variables_grids
+  :align: center
 
 Information related to these two grids are stored into two different groups : \textbf{intraburst} and \textbf{interburst} groups. Each group is defined by a specific set of attributes and variables.
 
-\subsubsection{intraburst group}
+intraburst group
+~~~~~~~~~~~~~~~~
 
-\paragraph{Attributes}
-\paragraph{Variables}
+.. image:: ./figures/coordinates_intra.png
+  :alt: coords
+  :scale: 100 %
+  :name: coords
+  :align: center
 
-\subsubsection{interburst group}
+Attributes
+==========
 
-\paragraph{Attributes}
-\paragraph{Variables}
+.. image:: ./figures/attrs_intra.png
+  :alt: aintra
+  :scale: 100 %
+  :name: aintra
+  :align: center
 
+Variables
+=========
 
+.. image:: ./figures/variables_intra.png
+  :alt: vintra
+  :scale: 100 %
+  :name: vintra
+  :align: center
 
-\subsection{Product access}
+intraburst group
+~~~~~~~~~~~~~~~~
+
+.. image:: ./figures/coordinates.png
+  :alt: coordsinter
+  :scale: 100 %
+  :name: coordsinter
+  :align: center
+
+Attributes
+==========
+
+.. image:: ./figures/attrs_intra.png
+  :alt: ainter
+  :scale: 100 %
+  :name: ainter
+  :align: center
+
+Variables
+=========
+
+.. image:: ./figures/variables_inter.png
+  :alt: vinter
+  :scale: 100 %
+  :name: vinter
+  :align: center
+
+Product access
+--------------
 
 Currently the Level-2 SARWAVE Sentinel-1 product is disseminated from this URL:
 
-\AM{TBD}
+https://cerweb.ifremer.fr/datarmor/sarwave/diffusion/sar/iw/slc/l2/
 
-# Acknowledgment
+Acknowledgment
+--------------
 
-The Sentinel-1 Level-2 SARWAVE Product has been developed by Ifremer. This work is co-funded by ESA through the SARWAVE project (https://www.sarwave.org/). The processor development benefits from support and contributions from Sentinel-1 Mission Performance Cluster team (https://sar-mpc.eu/about/activities-and-team/).
+The Sentinel-1 Level-2 SARWAVE Product has been developed by Ifremer. This work is co-funded by ESA through the SARWAVE project (https://www.sarwave.org/).
+The processor development benefits from support and contributions from Sentinel-1 Mission Performance Cluster team (https://sar-mpc.eu/about/activities-and-team/).
