@@ -16,6 +16,7 @@ Welcome to sarwaveifrproc's documentation!
    usage
    product_description
    atbd
+   bibliography
    modules
    contributing
    authors
