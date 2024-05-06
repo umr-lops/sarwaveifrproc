@@ -2,7 +2,7 @@
 History
 =======
 
-0.1.0 (2023-12-21)
-------------------
+see `releases`_
 
-* First release on PyPI.
+.. _`releases`: https://github.com/umr-lops/sarwaveifrproc/releases
+
