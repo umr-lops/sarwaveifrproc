@@ -39,7 +39,7 @@ Features
 Credits
 -------
 
-This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypackage`_ project template.
+This Sentinel-1 Level-2 sea state processor is developed/maintained by `Ifremer - LOPS laboratory`_. This work is co-funded by ESA through the SARWAVE project (https://www.sarwave.org/).
+The processor development benefits from support and contributions from Sentinel-1 Mission Performance Cluster team (https://sar-mpc.eu/about/activities-and-team/).
 
-.. _Cookiecutter: https://github.com/audreyr/cookiecutter
-.. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
+.. _Ifremer - LOPS laboratory: https://www.umr-lops.fr/
