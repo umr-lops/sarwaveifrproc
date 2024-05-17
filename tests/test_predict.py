@@ -13,7 +13,7 @@ subswathSAR=[os.path.join(os.path.dirname(sarwaveifrproc.__file__),'reference_da
                        ]
 # L1B_SAR_vh = [os.path.join(os.path.dirname(sarwaveifrproc.__file__),'reference_data','s1a-iw2-slc-vh-20231128t035702-20231128t035727-051412-063451-002_L1B_xspec_IFR_3.7.6nospectra.nc')]
 L1B_SAR_vv = [os.path.join(os.path.dirname(sarwaveifrproc.__file__),'reference_data',
-            's1a-iw2-slc-vv-20231128t035702-20231128t035727-051412-063451-005_L1B_xspec_IFR_3.7.6nospectra.nc')]
+            's1a-iw2-slc-vv-20231128t035702-20231128t035727-051412-063451-005_L1B_xspec_IFR_3.7_nospectra.nc')]
 hs_expected = []
 for ii in subswathSAR:
     # hs_expected[ii] = get_hs_values(ff=ii)
@@ -53,8 +53,8 @@ def test_hs_prediction(L1B_SAR_vv,hs_expected):
     logging.info('hs_expected %s', hs_expected)
     mask_nan = np.isfinite(hs_expected)
     diff = hs_actual[mask_nan]-hs_expected[mask_nan]
-    logging.info('diff : %s %s',diff.min(),diff.max())
-    assert np.allclose(hs_actual[mask_nan],hs_expected[mask_nan],atol=0.1)
+    logging.info('diff : minimal %s maximal %s',diff.min(),diff.max())
+    assert np.allclose(hs_actual[mask_nan],hs_expected[mask_nan],atol=0.002)
 
 
 if __name__ == '__main__':
