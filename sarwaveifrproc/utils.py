@@ -10,6 +10,7 @@ import re
 import os
 from datetime import datetime
 from sarwaveifrproc.l2_wave import generate_l2_wave_product
+from sarwaveifrproc.models import get_model
 
 def get_safe_date(safe):
     """
@@ -96,13 +97,18 @@ def get_output_filename(l1x_path, output_safe, tail='e00'):
     savepath = os.path.join(output_safe, final_filename)
     return savepath
 
-def load_config():
+def load_config(path=None):
     """
+    Parameters:
+        path (str): Optional. Path to a given config.
 
     Returns:
         conf: dict
     """
-    local_config_path = os.path.join(os.path.dirname(sarwaveifrproc.__file__), 'localconfig.yaml')
+    if path:
+        local_config_path = path
+    else:
+        local_config_path = os.path.join(os.path.dirname(sarwaveifrproc.__file__), 'localconfig.yaml')
 
     if os.path.exists(local_config_path):
         config_path = local_config_path
@@ -115,15 +121,16 @@ def load_config():
     return conf
 
 
-def load_models(paths, predicted_variables):
+def load_models_and_scalers(version, paths, predicted_variables):
     """
     Loads models, scalers, and bins necessary for prediction.
 
     Parameters:
+        version (str): Model version to use.
         paths (dict): Dictionary containing paths to model files, scaler files, and bin files.
             Keys:
-                - 'model_intraburst': Path to the intraburst model file.
-                - 'model_interburst': Path to the interburst model file.
+                - 'model_intraburst': Path to the intraburst model directory containing both model architecture and weights.
+                - 'model_interburst': Path to the interburst model directory containing both model architecture and weights.
                 - 'scaler_intraburst': Path to the intraburst scaler file.
                 - 'scaler_interburst': Path to the interburst scaler file.
                 - 'bins_intraburst': Path to the intraburst bins directory.
@@ -137,25 +144,49 @@ def load_models(paths, predicted_variables):
             - scaler_interburst (RobustScaler): Interburst scaler loaded from the provided path.
             - bins_intraburst (dict): Dictionary containing intraburst bins for each predicted variable.
             - bins_interburst (dict): Dictionary containing interburst bins for each predicted variable.
-
     """    
     # Unpack paths
     path_model_intraburst, path_model_interburst, path_scaler_intraburst, path_scaler_interburst, path_bins_intraburst, path_bins_interburst = paths.values()
     
-    # Load models and scalers using paths provided
-    model_intraburst = tf.keras.models.load_model(path_model_intraburst, compile=False)
+    # Load scalers using paths provided
     scaler_intraburst_array = np.load(path_scaler_intraburst)
     scaler_intraburst = RobustScaler(medians=scaler_intraburst_array[0], iqrs=scaler_intraburst_array[1])    
     
-    model_interburst = tf.keras.models.load_model(path_model_interburst, compile=False)
     scaler_interburst_array = np.load(path_scaler_interburst)
     scaler_interburst = RobustScaler(medians=scaler_interburst_array[0], iqrs=scaler_interburst_array[1]) 
     
+    # Load bins
     bins_intraburst = {f'{var}': np.load(os.path.join(path_bins_intraburst, f'bins_{var}.npy')) for var in predicted_variables}
     bins_interburst = {f'{var}': np.load(os.path.join(path_bins_interburst, f'bins_{var}.npy')) for var in predicted_variables}
+    
+    # Get number of classes to load models
+    nb_classes_intraburst = [len(bins_intraburst[var])-1 for var in predicted_variables]
+    nb_classes_interburst = [len(bins_interburst[var])-1 for var in predicted_variables]
+    
+    # Load models
+    model_intraburst = load_model(version, path_model_intraburst, nb_classes_intraburst)
+    model_interburst = load_model(version, path_model_interburst, nb_classes_interburst)
 
     return model_intraburst, model_interburst, scaler_intraburst, scaler_interburst, bins_intraburst, bins_interburst
     
+
+def load_model(version, path, nb_classes):
+    """
+    This function builds the model architecture and reads the model weights from an HDF5 file, and reconstructs the Keras model.
+
+    Parameters
+        version (str): Neural model version to use.
+        path (str): The path where the model weights are stored.
+        nb_classes (list of int): The number of output classes of the neural model. 
+
+    Returns
+    (tf.keras.Model) The reconstructed Keras model with the architecture and weights loaded.
+    """
+    model = get_model(version)(nb_classes)
+    model.load_weights(path)
+    
+    return model
+
     
 def process_files(input_safe, output_safe, model_intraburst, model_interburst, scaler_intraburst, scaler_interburst, bins_intraburst, bins_interburst, predicted_variables, product_id):
     """
