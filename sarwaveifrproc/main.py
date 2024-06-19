@@ -4,19 +4,21 @@ import os
 import sys
 import glob
 import numpy as np
-from sarwaveifrproc.utils import get_output_safe, load_config, load_models, process_files
 
 def parse_args():
     
     parser = argparse.ArgumentParser(description="Generate a L2 WAVE product from a L1B or L1C SAFE.")
-
+    
     # Define arguments
     parser.add_argument("--input_path", required=True, help="l1b or l1c safe path or listing path (.txt file).")
     parser.add_argument("--save_directory", required=True, help="where to save output data.")
     parser.add_argument("--product_id", required=True, help="3 digits ID representing the processing options. Ex: E00.")
+    
+    parser.add_argument("--config_path", default=None, help="custom config path for model prediction.")
 
     # Group related arguments under 'model' and 'bins'
     model_group = parser.add_argument_group('model', 'Arguments related to the neural models')
+    model_group.add_argument("--model_version", required=False, help="models version.")
     model_group.add_argument("--model_intraburst", required=False, help="neural model path to predict sea states on intraburst data.")
     model_group.add_argument("--model_interburst", required=False, help="neural model path to predict sea states on interburst data.")
 
@@ -41,6 +43,7 @@ def setup_logging(verbose=False):
     level = logging.DEBUG if verbose else logging.INFO
     logging.basicConfig(level=level, format=fmt, datefmt='%d/%m/%Y %H:%M:%S', force=True)
 
+    
 def get_files(dir_path, listing):
     
     fn = []
@@ -59,13 +62,23 @@ def main():
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # Suppress TensorFlow INFO and WARNING messages
     os.environ['CUDA_VISIBLE_DEVICES'] = '-1'  # Hide CUDA devices
 
+    #  Functions are loaded here otherwise it takes too long to display help
+    from sarwaveifrproc.utils import get_output_safe, load_config, load_models_and_scalers, process_files
+    
     logging.info("Loading configuration file...")
-    conf = load_config()
 
     input_path = args.input_path
     save_directory = args.save_directory
     product_id = args.product_id
+    
+    conf = load_config(args.config_path)
+
+    model_version = args.model_version or conf['model_version']
     predicted_variables = args.predicted_variables or conf['predicted_variables']
+    
+    # ========================= # 
+    # === PROCESS A LISTING === #
+    # ========================= # 
 
     if input_path.endswith('.txt'):
         files = np.loadtxt(input_path, dtype=str)
@@ -90,14 +103,17 @@ def main():
         'bins_intraburst': args.bins_intraburst or conf['bins_intraburst'],
         'bins_interburst': args.bins_interburst or conf['bins_interburst'],
         }
-        model_intraburst, model_interburst, scaler_intraburst, scaler_interburst, bins_intraburst, bins_interburst = load_models(paths, predicted_variables)
+        model_intraburst, model_interburst, scaler_intraburst, scaler_interburst, bins_intraburst, bins_interburst = load_models_and_scalers(model_version, paths, predicted_variables)
         logging.info('Models loaded.')
 
         logging.info('Processing files...')
         for f, output_safe in zip(files, output_safes):
             process_files(f, output_safe, model_intraburst, model_interburst, scaler_intraburst, scaler_interburst, bins_intraburst, bins_interburst, predicted_variables, product_id)
 
-            
+    # ============================= # 
+    # === PROCESS A SINGLE FILE === #
+    # ============================= # 
+    
     else:
         logging.info("Checking if output safe already exists...")
         output_safe = get_output_safe(input_path, save_directory, product_id)
@@ -115,7 +131,7 @@ def main():
             'bins_intraburst': args.bins_intraburst or conf['bins_intraburst'],
             'bins_interburst': args.bins_interburst or conf['bins_interburst'],
         }
-        model_intraburst, model_interburst, scaler_intraburst, scaler_interburst, bins_intraburst, bins_interburst = load_models(paths, predicted_variables)
+        model_intraburst, model_interburst, scaler_intraburst, scaler_interburst, bins_intraburst, bins_interburst = load_models_and_scalers(model_version, paths, predicted_variables)
         logging.info('Models loaded.')
 
         logging.info('Processing files...')

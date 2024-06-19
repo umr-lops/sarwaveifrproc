@@ -1,5 +1,6 @@
-model_intraburst: 'model_intraburst.keras'
-model_interburst: 'model_interburst.keras'
+model_version: '1.0.0'
+model_intraburst: 'model_intraburst.h5'
+model_interburst: 'model_interburst.h5'
 scaler_intraburst: 'scaler_intraburst.npy'
 scaler_interburst: 'scaler_interburst.npy'
 bins_intraburst: 'bins_intraburst'
