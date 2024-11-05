@@ -8,39 +8,90 @@ To use sarwaveifrproc in a project::
 
 
 .. code-block::
+PYTHONPATH=. L2-wave-processor 'hydra/help=[default,doc]' --help
 
-    L2-wave-processor -h
-    usage: L2-wave-processor [-h] --input_path INPUT_PATH --save_directory SAVE_DIRECTORY --product_id PRODUCT_ID [--model_intraburst MODEL_INTRABURST]
-                             [--model_interburst MODEL_INTERBURST] [--scaler_intraburst SCALER_INTRABURST] [--scaler_interburst SCALER_INTERBURST]
-                             [--bins_intraburst BINS_INTRABURST] [--bins_interburst BINS_INTERBURST] [--predicted_variables PREDICTED_VARIABLES] [--overwrite] [--verbose]
+        Generate a L2 WAVE product from a L1B or L1C SAFE.
 
-    Generate a L2 WAVE product from a L1B or L1C SAFE.
+        input_path: l1b or l1c safe path or listing path (.txt file).
+        save_directory: where to save output data
+        product_id: 3 digits ID representing the processing options. Ex: E00.
+        models: onnx models and output
+        predicted_variables:  model outputs and associated variables name to add to the L2 product
+        overwrite: overwrite the existing outputs
+        verbose: debug log level if True
 
-    options:
-      -h, --help            show this help message and exit
-      --input_path INPUT_PATH
-                            l1b or l1c safe path or listing path (.txt file).
-      --save_directory SAVE_DIRECTORY
-                            where to save output data.
-      --product_id PRODUCT_ID
-                            3 digits ID representing the processing options. Ex: E00.
-      --overwrite           overwrite the existing outputs
-      --verbose
+        == Configuration groups ==
+        Compose your configuration from those groups (group=option)
 
-    model:
-      Arguments related to the neural models
+        parallel: chunk
 
-      --model_intraburst MODEL_INTRABURST
-                            neural model path to predict sea states on intraburst data.
-      --model_interburst MODEL_INTERBURST
-                            neural model path to predict sea states on interburst data.
-      --scaler_intraburst SCALER_INTRABURST
-                            scaler path to standardize intraburst data before feeding it to the neural model.
-      --scaler_interburst SCALER_INTERBURST
-                            scaler path to standardize interburst data before feeding it to the neural model.
-      --bins_intraburst BINS_INTRABURST
-                            bins path that depicts the range of predictions on intraburst data.
-      --bins_interburst BINS_INTERBURST
-                            bins path that depicts the range of predictions on interburst data.
-      --predicted_variables PREDICTED_VARIABLES
-                            list of sea states variables to predict.
+
+        == Config ==
+        Override anything in the config (foo.bar=value)
+
+        _target_: sarwaveifrproc.main_new.main
+        input_path: ???
+        save_directory: ???
+        product_id: E09
+        models:
+          hs_mod:
+            path: models/hs.onnx
+            outputs:
+            - pred
+            - conf
+          t0m1_mod:
+            path: models/t0m1.onnx
+            outputs:
+            - pred
+            - conf
+          phs0_mod:
+            path: models/phs0.onnx
+            outputs:
+            - pred
+            - conf
+        predicted_variables:
+          intraburst:
+            hs_most_likely:
+              model: hs_mod
+              output: pred
+              attrs:
+                long_name: Most likely significant wave height
+                units: m
+            hs_conf:
+              model: hs_mod
+              output: conf
+              attrs:
+                long_name: Significant wave height confidence
+                units: ''
+            phs0_most_likely:
+              model: phs0_mod
+              output: pred
+              attrs:
+                long_name: Most likely wind sea significant wave height
+                units: m
+            phs0_conf:
+              model: phs0_mod
+              output: conf
+              attrs:
+                long_name: Wind sea significant wave height confidence
+                units: ''
+            t0m1_most_likely:
+              model: t0m1_mod
+              output: pred
+              attrs:
+                long_name: Most likely mean wave period
+                units: s
+            t0m1_conf:
+              model: t0m1_mod
+              output: conf
+              attrs:
+                long_name: Mean wave period confidence
+                units: ''
+          interburst: ${.intraburst}
+        overwrite: true
+        verbose: false
+
+
+        Powered by Hydra (https://hydra.cc)
+        Use --hydra-help to view Hydra specific help
+                                    list of sea states variables to predict.
