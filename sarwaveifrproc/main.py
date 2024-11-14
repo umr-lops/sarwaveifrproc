@@ -138,7 +138,7 @@ def get_files(dir_path, listing):
 
 
 hydra_main = hydra.main(
-    config_name="e10",
+    config_name="e11",
     config_path="pkg://sarwave_config",
     version_base="1.3",
 )(hydra_zen.zen(main))

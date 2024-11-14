@@ -232,9 +232,9 @@ def predict_variables(
 
     input_name = model.get_inputs()[0].name
     inputs = {input_name: X_stacked.astype(np.float32)}
-    res = model.run(None, inputs)
-    res = [r[..., 0] for r in res]
 
+    res = model.run(None, inputs)
+    res = [r[:, i] for r in res for i in range(r.shape[-1])]
     return res
 
 
