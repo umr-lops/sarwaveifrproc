@@ -58,7 +58,17 @@ def test_hs_prediction(L1B_SAR_vv,hs_expected):
 
 
 if __name__ == '__main__':
-    import logging
-    logging.basicConfig(level=logging.INFO)
+    import logging,argparse
+    parser = argparse.ArgumentParser(description='L1BwaveIFR_IW_SLC')
+    parser.add_argument('--verbose', action='store_true', default=False)
+    parser.add_argument('--input', required=False,default=L1B_SAR_vv[0], help='path of the l1b measurement to test (s1a-iw2-slc-vv-20231128t035702-20231128t035727-051412-063451-005)')
+    args = parser.parse_args()
+    fmt = '%(asctime)s %(levelname)s %(filename)s(%(lineno)d) %(message)s'
+    if args.verbose:
+        logging.basicConfig(level=logging.DEBUG, format=fmt,
+                            datefmt='%d/%m/%Y %H:%M:%S',force=True)
+    else:
+        logging.basicConfig(level=logging.INFO, format=fmt,
+                            datefmt='%d/%m/%Y %H:%M:%S',force=True)
     logging.info('start')
-    test_hs_prediction(L1B_SAR_vv[0],hs_expected[0])
+    test_hs_prediction(args.input,hs_expected[0])
