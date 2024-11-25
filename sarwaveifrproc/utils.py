@@ -1,13 +1,12 @@
 import sarwaveifrproc
 import tensorflow as tf
-import datatree as dtt
 import numpy as np
 import glob
 import logging
-import yaml 
-import pickle
+import yaml
 import re
 import os
+import xarray as xr
 from datetime import datetime
 from sarwaveifrproc.l2_wave import generate_l2_wave_product
 
@@ -180,7 +179,7 @@ def process_files(input_safe, output_safe, model_intraburst, model_interburst, s
     logging.info(f'{len(subswath_filenames)} subswaths found in given safe.')
     
     for path in subswath_filenames:
-        xdt = dtt.open_datatree(path)
+        xdt = xr.open_datatree(path)
         l2_product = generate_l2_wave_product(xdt, model_intraburst, model_interburst, scaler_intraburst, scaler_interburst, bins_intraburst, bins_interburst, predicted_variables)
 
         os.makedirs(output_safe, exist_ok=True)

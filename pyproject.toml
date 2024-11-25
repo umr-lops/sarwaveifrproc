@@ -19,7 +19,6 @@ dependencies = [
     "pyyaml",
     "scipy",
     "tensorflow",
-    "xarray-datatree"
     ]
 
 dynamic = ["version"]
