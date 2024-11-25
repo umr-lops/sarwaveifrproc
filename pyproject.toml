@@ -4,22 +4,11 @@ requires-python = ">= 3.9"
 description = "Python library to generate Level-2 WAVE Product starting from Ifremer Level-1B or Level-1C SAR files"
 readme.file = "README.md"
 readme.content-type = "text/markdown"
-license = {text = "MIT"}
-keywords = ["SAR", "wave", "reseach","sea-state"]
-authors = [
-  {name = "Robin Marquart"},
-  {name = "Antoine Grouazel"}
-]
-classifiers = [
-    "Programming Language :: Python :: 3",
-]
-dependencies = [
-    "xarray",
-    "netCDF4",
-    "pyyaml",
-    "scipy",
-    "tensorflow",
-    ]
+license = { text = "MIT" }
+keywords = ["SAR", "wave", "reseach", "sea-state"]
+authors = [{ name = "Robin Marquart" }, { name = "Antoine Grouazel" }]
+classifiers = ["Programming Language :: Python :: 3"]
+dependencies = ["xarray", "netCDF4", "pyyaml", "scipy", "tensorflow"]
 
 dynamic = ["version"]
 
