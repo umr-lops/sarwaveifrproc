@@ -6,16 +6,14 @@ sarwaveifrproc
 .. image:: https://img.shields.io/pypi/v/sarwaveifrproc.svg
         :target: https://pypi.python.org/pypi/sarwaveifrproc
 
-.. image:: https://img.shields.io/travis/agrouaze/sarwaveifrproc.svg
-        :target: https://travis-ci.com/agrouaze/sarwaveifrproc
 
 .. image:: https://readthedocs.org/projects/sarwaveifrproc/badge/?version=latest
         :target: https://sarwaveifrproc.readthedocs.io/en/latest/?version=latest
         :alt: Documentation Status
 
 
-.. image:: https://pyup.io/repos/github/agrouaze/sarwaveifrproc/shield.svg
-     :target: https://pyup.io/repos/github/agrouaze/sarwaveifrproc/
+.. image:: https://badge.fury.io/py/sarwaveifrproc.svg
+     :target: https://badge.fury.io/py/sarwaveifrproc
      :alt: Updates
 
 
