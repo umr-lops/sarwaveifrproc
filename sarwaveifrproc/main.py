@@ -65,7 +65,7 @@ def main(
     product_id: str,
     models: dict[str, Model],
     predicted_variables: PredictedVariables,
-    supported_input_product_versions: list[str],
+    supported_input_product_versions: list[str]=[],
     overwrite: bool = False,
     verbose: bool = False,
     dry_run: bool = False
@@ -80,6 +80,8 @@ def main(
     predicted_variables:  model outputs and associated variables name to add to the L2 product
     overwrite: overwrite the existing outputs
     verbose: debug log level if True
+    supported_input_product_versions: list of product versions the model exlicitely supports
+    dry_run: flag to skip the actual processing
     """
 
     setup_logging(verbose)
