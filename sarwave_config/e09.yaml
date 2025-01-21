@@ -1,0 +1,46 @@
+
+models:
+  hs_mod: 
+    path: models/hs.onnx
+    outputs: ['pred', 'conf']
+  t0m1_mod: 
+    path: models/t0m1.onnx
+    outputs: ['pred', 'conf']
+  phs0_mod: 
+    path: models/phs0.onnx
+    outputs: ['pred', 'conf']
+
+predicted_variables:
+  intraburst:
+    hs_most_likely: 
+      model: hs_mod
+      output: pred
+      attrs: {'long_name': 'Most likely significant wave height', 'units': 'm'}
+    hs_conf: 
+      model: hs_mod
+      output: conf
+      attrs: {'long_name': 'Significant wave height confidence', 'units': ''}
+    phs0_most_likely: 
+      model: phs0_mod
+      output: pred
+      attrs: {'long_name': 'Most likely wind sea significant wave height', 'units': 'm'}
+    phs0_conf: 
+      model: phs0_mod
+      output: conf
+      attrs: {'long_name': 'Wind sea significant wave height confidence', 'units': ''}
+    t0m1_most_likely: 
+      model: t0m1_mod
+      output: pred
+      attrs: {'long_name': 'Most likely mean wave period', 'units': 's'}
+    t0m1_conf: 
+      model: t0m1_mod
+      output: conf
+      attrs: {'long_name': 'Mean wave period confidence', 'units': ''}
+  interburst: ${.intraburst}
+
+product_id: E09
+overwrite: True
+
+defaults:
+  - base
+  - _self_

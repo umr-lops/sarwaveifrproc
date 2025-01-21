@@ -1,6 +1,7 @@
 import sarwaveifrproc
-import tensorflow as tf
-import datatree as dtt
+# import tensorflow as tf
+# import datatree as dtt
+import xarray as xr
 import numpy as np
 import glob
 import logging
@@ -53,7 +54,6 @@ def get_output_safe(l1x_safe, root_savepath, tail='E00'):
         regexA = re.compile("A[0-9]{2}.SAFE")
         regexB = re.compile("B[0-9]{2}.SAFE")
         if  re.search(regexA, final_safe.split('_')[-1]) or re.search(regexB, final_safe.split('_')[-1]):
-            print('match regexp')
             final_safe = final_safe.replace(final_safe.split('_')[-1], f'{tail.upper()}.SAFE')
         else:
             print('no slug existing-> just add the product ID')
@@ -157,31 +157,27 @@ def load_models(paths, predicted_variables):
     return model_intraburst, model_interburst, scaler_intraburst, scaler_interburst, bins_intraburst, bins_interburst
     
     
-def process_files(input_safe, output_safe, model_intraburst, model_interburst, scaler_intraburst, scaler_interburst, bins_intraburst, bins_interburst, predicted_variables, product_id):
+def process_files(input_safe, output_safe, models, models_outputs, predicted_variables, product_id):
     """
     Processes files in the input directory, generates predictions, and saves results in the output directory.
 
     Parameters:
         input_safe (str): Input safe path.
         output_safe (str): Path to the directory where output data will be saved.
-        model_intraburst (tf.keras.Model): Intraburst model for prediction.
-        model_interburst (tf.keras.Model): Interburst model for prediction.
-        scaler_intraburst (RobustScaler): Scaler for intraburst data.
-        scaler_interburst (RobustScaler): Scaler for interburst data.
-        bins_intraburst (dict): Dictionary containing intraburst bins for each predicted variable.
-        bins_interburst (dict): Dictionary containing interburst bins for each predicted variable.
+        models (dict): dict of onnx runtime inference sessions
+        models_outputs (dict): dict of List of model outputs names
         predicted_variables (list): List of variable names to be predicted.
         product_id (str): Identifier for the output product.
-
+ort_mods, models, predicted_variables, product_id)
     Returns:
         None
     """
-    subswath_filenames = glob.glob(os.path.join(input_safe, '*-?v-*.nc'))
+    subswath_filenames = glob.glob(os.path.join(input_safe, '*?v*.nc'))
     logging.info(f'{len(subswath_filenames)} subswaths found in given safe.')
     
     for path in subswath_filenames:
-        xdt = dtt.open_datatree(path)
-        l2_product = generate_l2_wave_product(xdt, model_intraburst, model_interburst, scaler_intraburst, scaler_interburst, bins_intraburst, bins_interburst, predicted_variables)
+        xdt = xr.DataTree.from_dict(xr.open_groups(path))
+        l2_product = generate_l2_wave_product(xdt, models, models_outputs, predicted_variables)
 
         os.makedirs(output_safe, exist_ok=True)
         savepath = get_output_filename(path, output_safe, product_id)
