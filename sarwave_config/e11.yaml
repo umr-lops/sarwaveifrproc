@@ -1,0 +1,68 @@
+supported_input_product_versions: [B08, A15, A16, A17]
+
+models:
+    multi:
+      path: models/multi.onnx
+      outputs: ['pred_hs', 'pred_phs0', 'pred_t0m1', 'conf_hs', 'conf_phs0', 'conf_t0m1']
+    multi_interburst:
+      path: models/multi_interburst.onnx
+      outputs: ['pred_hs', 'pred_phs0', 'pred_t0m1', 'conf_hs', 'conf_phs0', 'conf_t0m1']
+
+predicted_variables:
+  intraburst:
+    hs_most_likely: 
+      model: multi
+      output: pred_hs
+      attrs: {'long_name': 'Most likely significant wave height', 'units': 'm'}
+    hs_conf: 
+      model: multi
+      output: conf_hs
+      attrs: {'long_name': 'Significant wave height confidence', 'units': ''}
+    phs0_most_likely: 
+      model: multi
+      output: pred_phs0
+      attrs: {'long_name': 'Most likely wind sea significant wave height', 'units': 'm'}
+    phs0_conf: 
+      model: multi
+      output: conf_phs0
+      attrs: {'long_name': 'Wind sea significant wave height confidence', 'units': ''}
+    t0m1_most_likely: 
+      model: multi
+      output: pred_t0m1
+      attrs: {'long_name': 'Most likely mean wave period', 'units': 's'}
+    t0m1_conf: 
+      model: multi
+      output: conf_t0m1
+      attrs: {'long_name': 'Mean wave period confidence', 'units': ''}
+  interburst:
+    hs_most_likely: 
+      model: multi_interburst
+      output: pred_hs
+      attrs: {'long_name': 'Most likely significant wave height', 'units': 'm'}
+    hs_conf: 
+      model: multi_interburst
+      output: conf_hs
+      attrs: {'long_name': 'Significant wave height confidence', 'units': ''}
+    phs0_most_likely: 
+      model: multi_interburst
+      output: pred_phs0
+      attrs: {'long_name': 'Most likely wind sea significant wave height', 'units': 'm'}
+    phs0_conf: 
+      model: multi_interburst
+      output: conf_phs0
+      attrs: {'long_name': 'Wind sea significant wave height confidence', 'units': ''}
+    t0m1_most_likely: 
+      model: multi_interburst
+      output: pred_t0m1
+      attrs: {'long_name': 'Most likely mean wave period', 'units': 's'}
+    t0m1_conf: 
+      model: multi_interburst
+      output: conf_t0m1
+      attrs: {'long_name': 'Mean wave period confidence', 'units': ''}
+
+product_id: E11
+overwrite: True
+
+defaults:
+  - base
+  - _self_
