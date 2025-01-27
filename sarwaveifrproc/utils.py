@@ -12,6 +12,19 @@ import os
 from datetime import datetime
 from sarwaveifrproc.l2_wave import generate_l2_wave_product
 
+SAFE_PATTERN = (
+            r'^(?P<mission_id>\w{3})_'
+            + r'(?P<mode>\w{2})_'
+            + r'(?P<type>\w{3})(?P<res>\w|_)_'
+            + r'(?P<level>\w{1})(?P<class>\w{1})(?P<pol>\w{2})_'
+            + r'(?P<starttime>\w{15})_'
+            + r'(?P<endtime>\w{15})_'
+            + r'(?P<orbit_no>\w{6})_'
+            + r'(?P<datatake_id>\w{6})_'
+            + r'(?P<id>\w{4})')
+
+VERS_SAFE_PATTERN = SAFE_PATTERN +  r'_(?P<version>\w{3})'
+
 def get_safe_date(safe):
     """
     Extracts and returns the date and time from a given SAFE directory name.
@@ -44,13 +57,16 @@ def get_output_safe(l1x_safe, root_savepath, tail='E00'):
     l1x_safe = l1x_safe.rstrip('/') # remove trailing slash
     safe = l1x_safe.split(os.sep)[-1]
     final_safe = safe
-    
-    if all((pattern in safe) for pattern in ['XSP_', '1SDV', '.SAFE']):
-        
+    m = re.match(VERS_SAFE_PATTERN, final_safe).groupdict()
+    cond1=  m['type'] == 'XSP'
+    cond2 = m['pol'] in ['SV','DV']
+    cond3 = final_safe.endswith('.SAFE')
+    if cond1 and cond2 and cond3:
         date = get_safe_date(safe)
 
         final_safe = final_safe.replace('XSP_', 'WAV_')
         final_safe = final_safe.replace('1SDV', '2SDV')
+        final_safe = final_safe.replace('1SSV', '2SSV')
         regexA = re.compile("A[0-9]{2}.SAFE")
         regexB = re.compile("B[0-9]{2}.SAFE")
         if  re.search(regexA, final_safe.split('_')[-1]) or re.search(regexB, final_safe.split('_')[-1]):
