@@ -35,18 +35,7 @@ class Prediction:
     attrs: dict[str, str]
 
 
-SAFE_PATTERN = (
-            r'^(?P<mission_id>\w{3})_'
-            + r'(?P<mode>\w{2})_'
-            + r'(?P<type>\w{3})(?P<res>\w|_)_'
-            + r'(?P<level>\w{1})(?P<class>\w{1})(?P<pol>\w{2})_'
-            + r'(?P<starttime>\w{15})_'
-            + r'(?P<endtime>\w{15})_' 
-            + r'(?P<orbit_no>\w{6})_'
-            + r'(?P<datatake_id>\w{6})_'
-            + r'(?P<id>\w{4})')
 
-VERS_SAFE_PATTERN = SAFE_PATTERN +  r'_(?P<version>\w{3})'
 
 @dataclass
 class PredictedVariables:
@@ -116,7 +105,7 @@ def main(
         logging.info("Processing files...")
         for f, output_safe in zip(files, output_safes):
             name = Path(f).name
-            m = re.match(VERS_SAFE_PATTERN, name)
+            m = re.match(utils.VERS_SAFE_PATTERN, name)
             if m is None or m.groupdict().get('version') not in supported_input_product_versions:
                 logging.warning(f'Unsupported product version for SAFE {name}')
             if dry_run: continue
@@ -126,7 +115,7 @@ def main(
 
     else:
         name = Path(input_path).name
-        m = re.match(VERS_SAFE_PATTERN, name)
+        m = re.match(utils.VERS_SAFE_PATTERN, name)
         if m is None or m.groupdict().get('version') not in supported_input_product_versions:
             logging.warning(f'Unsupported product version for SAFE {name}')
         logging.info("Checking if output safe already exists...")

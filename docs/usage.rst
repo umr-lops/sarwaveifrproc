@@ -32,7 +32,7 @@ Local parallel run
 ~~~~~~~~~~~~~~~~~~~~~~
 Example with 100 parallel jobs see hydra / joblib documentation for more information
 .. code-block::
-L2-wave-processor -m hydra/launcher=joblib +parallel=chunk hydra.launcher.n_jobs=100  input_path.path=<...> 'input_path.i=range(100)' save_directory=<...>
+L2-wave-processor -m hydra/launcher=joblib +parallel=chunk hydra.launcher.n_jobs=100 'input_path.i=range(100)'   input_path.path=<...>  save_directory=<...>
 
 Configuration
 ~~~~~~~~~~~~~~~~~~~~~~
