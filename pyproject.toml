@@ -4,20 +4,38 @@ requires-python = ">= 3.9"
 description = "Python library to generate Level-2 WAVE Product starting from Ifremer Level-1B or Level-1C SAR files"
 readme.file = "README.md"
 readme.content-type = "text/markdown"
-license = { text = "MIT" }
-keywords = ["SAR", "wave", "reseach", "sea-state"]
-authors = [{ name = "Robin Marquart" }, { name = "Antoine Grouazel" }]
-classifiers = ["Programming Language :: Python :: 3"]
-dependencies = ["xarray", "netCDF4", "pyyaml", "scipy", "tensorflow"]
+license = {text = "MIT"}
+keywords = ["SAR", "wave", "reseach","sea-state"]
+authors = [
+  {name = "Robin Marquart"},
+  {name = "Antoine Grouazel"},
+  {name = "Quentin Febvre"}
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+]
+dependencies = [
+    "xarray",
+    "hydra-zen",
+    "netCDF4",
+    "pyyaml",
+    "scipy",
+    "onnxruntime"
+]
 
 dynamic = ["version"]
 
+[project.optional-dependencies]
+gpu = [ "onnxruntime-gpu" ]
+
+joblib = [ "hydra-joblib-launcher" ]
+
 [build-system]
-requires = ["setuptools>=64.0", "setuptools-scm"]
+requires = ["setuptools>=64.0", "setuptools-scm>=8"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-packages = ["sarwaveifrproc"]
+packages = ["sarwaveifrproc", "sarwave_config"]
 
 [tool.setuptools_scm]
 fallback_version = "999"
@@ -30,7 +48,7 @@ default_section = "THIRDPARTY"
 known_first_party = "sarwaveifrproc"
 
 [project.scripts]
-L2-wave-processor = "sarwaveifrproc.main:main"
+L2-wave-processor = "sarwaveifrproc.main:hydra_main"
 
 [tool.ruff.lint]
 ignore = [
