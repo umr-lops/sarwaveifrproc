@@ -1,5 +1,6 @@
 import logging
 import os
+import numpy as np
 import pytest
 import xarray as xr
 import hydra_zen
@@ -9,11 +10,23 @@ from omegaconf import DictConfig,OmegaConf
 import sarwaveifrproc
 import onnxruntime
 from sarwaveifrproc.l2_wave import generate_intermediate_product
-
+VARIABLE = 'hs_most_likely'
+GRP = 'intraburst'
+kept_variables = [
+    "corner_longitude",
+    "corner_latitude",
+    "land_flag",
+    "sigma0_filt",
+    "normalized_variance_filt",
+    "incidence",
+    "azimuth_cutoff",
+    "cwave_params",
+]
 # reference prediction is E01 (rmarquart January 2024), validated by L.Maillard
 def get_hs_values(ff):
-    ds = xr.open_dataset(ff, group="intraburst")
-    return ds["hs_mean"].data
+    ds = xr.open_dataset(ff, group=GRP)
+    print('hs?',[uu for uu in ds if 'hs' in uu])
+    return ds[VARIABLE].data
 
 # expected outputs
 subswathSAR = [
@@ -105,9 +118,8 @@ def test_hs_prediction_E11(L1B_SAR_vv, hs_expected):
     mod_outs = {k: d.outputs for k, d in models.items()}
     logging.info("Models loaded.")
     predicted_variables = cfg['predicted_variables']
-    kept_variables = cfg['kept_variables']
     ds_intraburst = generate_intermediate_product(
-        xdt["intraburst"].ds,
+        xdt[GRP].ds,
         models=ort_mods,
         models_outputs=mod_outs,
         predicted_variables=predicted_variables.intraburst,
@@ -115,8 +127,12 @@ def test_hs_prediction_E11(L1B_SAR_vv, hs_expected):
         pol='VV'
     )
     print('ds_intraburst',ds_intraburst)
-    actual_hs_values = ds_intraburst["hs_mean"].data
-    assert actual_hs_values==hs_expected
+
+    actual_hs_values = ds_intraburst[VARIABLE].data
+    print(actual_hs_values.shape)
+    print(hs_expected.shape)
+    print(actual_hs_values,hs_expected)
+    assert np.allclose(actual_hs_values,hs_expected, atol=1e-03,equal_nan=True)
 
 if __name__ == "__main__":
     import argparse
