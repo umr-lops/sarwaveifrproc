@@ -1,8 +1,9 @@
 import os
+import traceback
 
 import pytest
 
-from sarwaveifrproc.utils import get_output_filename, get_output_safe
+from sarwaveifrproc.utils import get_output_filename, get_output_safe, SAFE_PATTERN
 
 inputs_l1slc = [
     "/tmp/2022/127/S1A_IW_XSP__1SDV_20220507T162437_20220507T162504_043107_0525DE_B14E_A02.SAFE/l1b-s1a-iw1-xsp-vv-20220507t162439-20220507t162504-043107-0525de-004-a02.nc",
@@ -34,3 +35,13 @@ def test_outputfile_path(l1b_fullpath, expected_l2wav):
 
     print(l2_full_path)
     assert l2_full_path == expected_l2wav
+
+if __name__ == '__main__':
+    import re
+    for path in inputs_l1slc:
+        safe_name = os.path.basename(os.path.dirname(path))
+        match = re.match(SAFE_PATTERN, safe_name)
+        if match:
+            print("✔ Match:", safe_name, match.groupdict())
+        else:
+            print("❌ No match:", safe_name)

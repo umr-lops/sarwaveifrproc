@@ -10,18 +10,21 @@ import os
 from datetime import datetime
 from sarwaveifrproc.l2_wave import generate_l2_wave_product
 
-SAFE_PATTERN = (
-            r'^(?P<mission_id>\w{3})_'
-            + r'(?P<mode>\w{2})_'
-            + r'(?P<type>\w{3})(?P<res>\w|_)_'
-            + r'(?P<level>\w{1})(?P<class>\w{1})(?P<pol>\w{2})_'
-            + r'(?P<starttime>\w{15})_'
-            + r'(?P<endtime>\w{15})_'
-            + r'(?P<orbit_no>\w{6})_'
-            + r'(?P<datatake_id>\w{6})_'
-            + r'(?P<id>\w{4})')
 
-VERS_SAFE_PATTERN = SAFE_PATTERN +  r'_(?P<version>\w{3})'
+SAFE_PATTERN = (
+    r'^(?P<mission_id>S1[A-Z])_'
+    r'(?P<mode>[IE]W)_'
+    r'(?P<type>[A-Z]{3})__'
+    r'(?P<level>[0-9])(?P<class>[A-Z])(?P<pol>[A-Z]{2})_'
+    r'(?P<starttime>\d{8}T\d{6})_'
+    r'(?P<endtime>\d{8}T\d{6})_'
+    r'(?P<orbit_no>\d{6})_'
+    r'(?P<datatake_id>[A-Z0-9]{6})_'
+    r'(?P<id>[A-Z0-9]{4})'
+    r'(?:_(?P<suffix>[A-Z0-9]{3}))?'  # optional _B02, _A02, etc.
+    r'\.SAFE$'
+)
+
 
 def get_safe_date(safe):
     """
@@ -55,7 +58,8 @@ def get_output_safe(l1x_safe, root_savepath, tail='E00'):
     l1x_safe = l1x_safe.rstrip('/') # remove trailing slash
     safe = l1x_safe.split(os.sep)[-1]
     final_safe = safe
-    m = re.match(VERS_SAFE_PATTERN, final_safe).groupdict()
+    info = re.match(SAFE_PATTERN, final_safe)
+    m = info.groupdict()
     cond1=  m['type'] == 'XSP'
     cond2 = m['pol'] in ['SV','DV']
     cond3 = final_safe.endswith('.SAFE')
