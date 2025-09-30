@@ -42,7 +42,7 @@ An example of L2 WAV filename is
 
 .. code-block::
 
-    S1A_IW_WAV__2SDV_20231103T063230_20231103T063257_051049_0627C3_C45D_E00.SAFE
+  S1A_IW_WAV__2SDV_20231103T063230_20231103T063257_051049_0627C3_C45D_E00.SAFE
 
 , where :math:`E00` define a product version, it means: a processor version + options of processing
 
@@ -52,7 +52,8 @@ An example of L2 WAV measurement filename is
 
 .. code-block::
 
-    l2-s1a-iw1-wav-dv-20231103t063230-20231103t063255-051049-0627c3-e00.nc
+  l2-s1a-iw1-wav-dv-20231103t063230-20231103t063255-051049-0627c3-e00.nc
+
 
 where :math:`l2` gives the processing level, :math:`wav` describe the product family; :math:`dv` the polarization configuration for the acquisition (independently of how the channels are used in the file itself).
 :math:`e00` is a product version, it means: a processor version + options of processing. The same are the one given at the end of the SAFE name.
