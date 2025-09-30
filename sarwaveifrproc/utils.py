@@ -155,7 +155,7 @@ def process_files(
         files_in_error (list): List of files that encountered errors during processing.
     """
     subswath_filenames = glob.glob(os.path.join(input_safe, "*?v*.nc"))
-    logging.info(f"{len(subswath_filenames)} subswaths found in given safe.")
+    logging.debug(f"{len(subswath_filenames)} subswaths found in given safe.")
     files_in_error = []
     for path in subswath_filenames:
         try:

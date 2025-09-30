@@ -9,6 +9,7 @@ import hydra
 import hydra_zen
 import numpy as np
 import onnxruntime
+from tqdm import tqdm
 
 import sarwaveifrproc.utils as utils
 
@@ -103,13 +104,15 @@ def main(
                 return None
 
         logging.info("Processing files...")
-        for f, output_safe in zip(files, output_safes):
+        for iix in tqdm(range(len(files))):
+            f = files[iix]
+            output_safe = output_safes[iix]
             name = Path(f).name
             m = re.match(utils.SAFE_PATTERN, name)
             if (
                 m is None
                 or m.groupdict().get("version") not in supported_input_product_versions
-            ):
+            ) and iix == 0:
                 logging.warning(f"Unsupported product version for SAFE {name}")
             if dry_run:
                 continue
@@ -125,6 +128,8 @@ def main(
                 logging.info(f"writting the list of files in error to  {filout_error}")
                 with open(filout_error, "w") as ff:
                     ff.writelines("\n".join(files_in_error))
+            else:
+                logging.info("All provided SAFE have been processed successfuly.")
 
     else:
         name = Path(input_path).name
