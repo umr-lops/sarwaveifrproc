@@ -105,7 +105,7 @@ def main(
         logging.info("Processing files...")
         for f, output_safe in zip(files, output_safes):
             name = Path(f).name
-            m = re.match(utils.VERS_SAFE_PATTERN, name)
+            m = re.match(utils.SAFE_PATTERN, name)
             if m is None or m.groupdict().get('version') not in supported_input_product_versions:
                 logging.warning(f'Unsupported product version for SAFE {name}')
             if dry_run: continue
@@ -115,7 +115,7 @@ def main(
 
     else:
         name = Path(input_path).name
-        m = re.match(utils.VERS_SAFE_PATTERN, name)
+        m = re.match(utils.SAFE_PATTERN, name)
         if m is None or m.groupdict().get('version') not in supported_input_product_versions:
             logging.warning(f'Unsupported product version for SAFE {name}')
         logging.info("Checking if output safe already exists...")

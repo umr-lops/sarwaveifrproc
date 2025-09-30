@@ -5,6 +5,7 @@ import glob
 import logging
 import yaml 
 import pickle
+import traceback
 import re
 import os
 from datetime import datetime
@@ -194,12 +195,17 @@ ort_mods, models, predicted_variables, product_id)
     logging.info(f'{len(subswath_filenames)} subswaths found in given safe.')
     
     for path in subswath_filenames:
-        xdt = xr.DataTree.from_dict(xr.open_groups(path))
-        l2_product = generate_l2_wave_product(xdt, models, models_outputs, predicted_variables)
+        try:
+            xdt = xr.DataTree.from_dict(xr.open_groups(path))
+            l2_product = generate_l2_wave_product(xdt, models, models_outputs, predicted_variables)
 
-        os.makedirs(output_safe, exist_ok=True)
-        savepath = get_output_filename(path, output_safe, product_id)
-        l2_product.to_netcdf(savepath)
+            os.makedirs(output_safe, exist_ok=True)
+            savepath = get_output_filename(path, output_safe, product_id)
+            l2_product.to_netcdf(savepath)
+        except:
+            logging.errror(traceback.format_exc())
+            logging.error(f'Error processing {path}. Skipping this file.')
+            continue
         
     
 class RobustScaler:
