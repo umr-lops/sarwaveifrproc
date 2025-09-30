@@ -48,7 +48,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "sarwaveifrproc"
-copyright = "2023, Antoine Grouazel"
+copyright = "2025, LOPS-Ifremer"
 author = "Antoine Grouazel"
 
 # The version info for the project you're documenting, acts as replacement

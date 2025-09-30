@@ -29,6 +29,8 @@ Sequential processing
 
   L2-wave-processor input_path=<path/to/listing.txt>  save_directory=<path/to/savedir>
 
+  
+
 
 Local parallel run
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -38,12 +40,15 @@ Example with 100 parallel jobs see hydra / joblib documentation for more informa
 
   L2-wave-processor -m hydra/launcher=joblib +parallel=chunk hydra.launcher.n_jobs=100 'input_path.i=range(100)'   input_path.path=<...>  save_directory=<...>
 
+
+
 Configuration
 ~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block::
 
   » L2-wave-processor --help
+
 
 _implementations is powered by Hydra.
 
