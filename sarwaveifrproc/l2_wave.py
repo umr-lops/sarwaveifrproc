@@ -1,7 +1,8 @@
-import numpy as np
 import os
+
+import numpy as np
 import xarray as xr
-from scipy import special
+
 import sarwaveifrproc
 
 attributes_missing_variables = {

@@ -11,12 +11,12 @@ To use sarwaveifrproc in a project::
 
 Exemple Usage
 -------------
-Example usage 
+Example usage
 
 
 SAFE naming convention
 ~~~~~~~~~~~~~~~~~~~~~~
-be sure your configuration is in your python path, exemple: 
+be sure your configuration is in your python path, exemple:
 
 .. code-block::
    export PYTHONPATH=$PYTHONPATH:<path/to/sarwaveifrproc>

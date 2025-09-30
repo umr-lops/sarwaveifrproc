@@ -1,14 +1,16 @@
-import logging
-from pathlib import Path
-import hydra_zen
-import hydra
-import os
 import glob
-import numpy as np
-import sarwaveifrproc.utils as utils
-from dataclasses import dataclass
-import onnxruntime
+import logging
+import os
 import re
+from dataclasses import dataclass
+from pathlib import Path
+
+import hydra
+import hydra_zen
+import numpy as np
+import onnxruntime
+
+import sarwaveifrproc.utils as utils
 
 
 @dataclass
@@ -35,8 +37,6 @@ class Prediction:
     attrs: dict[str, str]
 
 
-
-
 @dataclass
 class PredictedVariables:
     """
@@ -54,10 +54,10 @@ def main(
     product_id: str,
     models: dict[str, Model],
     predicted_variables: PredictedVariables,
-    supported_input_product_versions: list[str]=[],
+    supported_input_product_versions: list[str] = [],
     overwrite: bool = False,
     verbose: bool = False,
-    dry_run: bool = False
+    dry_run: bool = False,
 ):
     """
     Generate a L2 WAVE product from a L1B or L1C SAFE.
@@ -106,9 +106,13 @@ def main(
         for f, output_safe in zip(files, output_safes):
             name = Path(f).name
             m = re.match(utils.SAFE_PATTERN, name)
-            if m is None or m.groupdict().get('version') not in supported_input_product_versions:
-                logging.warning(f'Unsupported product version for SAFE {name}')
-            if dry_run: continue
+            if (
+                m is None
+                or m.groupdict().get("version") not in supported_input_product_versions
+            ):
+                logging.warning(f"Unsupported product version for SAFE {name}")
+            if dry_run:
+                continue
             utils.process_files(
                 f, output_safe, ort_mods, mod_outs, predicted_variables, product_id
             )
@@ -116,8 +120,11 @@ def main(
     else:
         name = Path(input_path).name
         m = re.match(utils.SAFE_PATTERN, name)
-        if m is None or m.groupdict().get('version') not in supported_input_product_versions:
-            logging.warning(f'Unsupported product version for SAFE {name}')
+        if (
+            m is None
+            or m.groupdict().get("version") not in supported_input_product_versions
+        ):
+            logging.warning(f"Unsupported product version for SAFE {name}")
         logging.info("Checking if output safe already exists...")
         output_safe = utils.get_output_safe(input_path, save_directory, product_id)
 
@@ -130,7 +137,12 @@ def main(
         logging.info("Processing files...")
         if not dry_run:
             utils.process_files(
-                input_path, output_safe, ort_mods, mod_outs, predicted_variables, product_id
+                input_path,
+                output_safe,
+                ort_mods,
+                mod_outs,
+                predicted_variables,
+                product_id,
             )
 
     logging.info(f"Processing terminated. Output directory: \n{save_directory}")
