@@ -6,6 +6,7 @@ import traceback
 from datetime import datetime
 
 import xarray as xr
+
 from sarwaveifrproc.l2_wave import generate_l2_wave_product
 
 SAFE_PATTERN = (
@@ -141,17 +142,17 @@ def process_files(
     input_safe, output_safe, models, models_outputs, predicted_variables, product_id
 ):
     """
-        Processes files in the input directory, generates predictions, and saves results in the output directory.
+    Processes files in the input directory, generates predictions, and saves results in the output directory.
 
-        Parameters:
-            input_safe (str): Input safe path.
-            output_safe (str): Path to the directory where output data will be saved.
-            models (dict): dict of onnx runtime inference sessions
-            models_outputs (dict): dict of List of model outputs names
-            predicted_variables (list): List of variable names to be predicted.
-            product_id (str): Identifier for the output product. 
-        Returns:
-            files_in_error (list): List of files that encountered errors during processing.
+    Parameters:
+        input_safe (str): Input safe path.
+        output_safe (str): Path to the directory where output data will be saved.
+        models (dict): dict of onnx runtime inference sessions
+        models_outputs (dict): dict of List of model outputs names
+        predicted_variables (list): List of variable names to be predicted.
+        product_id (str): Identifier for the output product.
+    Returns:
+        files_in_error (list): List of files that encountered errors during processing.
     """
     subswath_filenames = glob.glob(os.path.join(input_safe, "*?v*.nc"))
     logging.info(f"{len(subswath_filenames)} subswaths found in given safe.")

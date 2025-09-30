@@ -1,8 +1,8 @@
-import glob
 import logging
 import os
 import re
 from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
 
 import hydra
@@ -116,6 +116,15 @@ def main(
             files_in_error = utils.process_files(
                 f, output_safe, ort_mods, mod_outs, predicted_variables, product_id
             )
+            if len(files_in_error) > 0:
+                filout_error = os.path.join(
+                    "files_in_error_{}.txt".format(
+                        datetime.now().strftime("%Y%m%d_%H%M%S")
+                    )
+                )
+                logging.info(f"writting the list of files in error to  {filout_error}")
+                with open(filout_error, "w") as ff:
+                    ff.writelines("\n".join(files_in_error))
 
     else:
         name = Path(input_path).name
@@ -154,7 +163,6 @@ def setup_logging(verbose=False):
     logging.basicConfig(
         level=level, format=fmt, datefmt="%d/%m/%Y %H:%M:%S", force=True
     )
-
 
 
 hydra_main = hydra.main(
