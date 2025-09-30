@@ -113,7 +113,7 @@ def main(
                 logging.warning(f"Unsupported product version for SAFE {name}")
             if dry_run:
                 continue
-            utils.process_files(
+            files_in_error = utils.process_files(
                 f, output_safe, ort_mods, mod_outs, predicted_variables, product_id
             )
 
@@ -136,7 +136,7 @@ def main(
 
         logging.info("Processing files...")
         if not dry_run:
-            utils.process_files(
+            files_in_error = utils.process_files(
                 input_path,
                 output_safe,
                 ort_mods,
@@ -155,16 +155,6 @@ def setup_logging(verbose=False):
         level=level, format=fmt, datefmt="%d/%m/%Y %H:%M:%S", force=True
     )
 
-
-def get_files(dir_path, listing):
-
-    fn = []
-    for s in listing:
-        search_path = os.path.join(dir_path, s.replace("WAVE", "XSP_"), "*-?v-*.nc")
-        fn += glob.glob(search_path)
-
-    print("Number of files :", len(fn))
-    return fn
 
 
 hydra_main = hydra.main(

@@ -6,9 +6,6 @@ import traceback
 from datetime import datetime
 
 import xarray as xr
-import yaml
-
-import sarwaveifrproc
 from sarwaveifrproc.l2_wave import generate_l2_wave_product
 
 SAFE_PATTERN = (
@@ -140,29 +137,6 @@ def get_output_filename(l1x_path, output_safe, tail="e00"):
     return savepath
 
 
-def load_config():
-    """
-
-    Returns:
-        conf: dict
-    """
-    local_config_path = os.path.join(
-        os.path.dirname(sarwaveifrproc.__file__), "localconfig.yaml"
-    )
-
-    if os.path.exists(local_config_path):
-        config_path = local_config_path
-    else:
-        config_path = os.path.join(
-            os.path.dirname(sarwaveifrproc.__file__), "config.yaml"
-        )
-
-    logging.info("config path: %s", config_path)
-    stream = open(config_path)
-    conf = yaml.load(stream, Loader=yaml.CLoader)
-    return conf
-
-
 def process_files(
     input_safe, output_safe, models, models_outputs, predicted_variables, product_id
 ):
@@ -175,14 +149,13 @@ def process_files(
             models (dict): dict of onnx runtime inference sessions
             models_outputs (dict): dict of List of model outputs names
             predicted_variables (list): List of variable names to be predicted.
-            product_id (str): Identifier for the output product.
-    ort_mods, models, predicted_variables, product_id)
+            product_id (str): Identifier for the output product. 
         Returns:
-            None
+            files_in_error (list): List of files that encountered errors during processing.
     """
     subswath_filenames = glob.glob(os.path.join(input_safe, "*?v*.nc"))
     logging.info(f"{len(subswath_filenames)} subswaths found in given safe.")
-
+    files_in_error = []
     for path in subswath_filenames:
         try:
             xdt = xr.DataTree.from_dict(xr.open_groups(path))
@@ -196,34 +169,6 @@ def process_files(
         except Exception:
             logging.errror(traceback.format_exc())
             logging.error(f"Error processing {path}. Skipping this file.")
+            files_in_error.append(path)
             continue
-
-
-class RobustScaler:
-    """
-    Class to mimic scikit-learn RobustScaler. This is done in order to prevent warning messages when using pickle to load the scikit-learn scaler.
-    """
-
-    def __init__(self, medians, iqrs):
-        """
-        Initialize the RobustScaler with provided medians and IQRs.
-
-        Parameters:
-            medians (np.ndarray): Median values for each feature.
-            iqrs (np.ndarray): Interquartile ranges (IQRs) for each feature.
-        """
-        self.medians = medians
-        self.iqrs = iqrs
-
-    def transform(self, X):
-        """
-        Scale the input data X using the stored medians and IQRs.
-
-        Parameters:
-            X (np.ndarray): Input data to be scaled.
-
-        Returns:
-            X_scaled (np.ndarray): Scaled data.
-        """
-        X_scaled = (X - self.medians) / self.iqrs
-        return X_scaled
+    return files_in_error  # can be used to reprocess the files in failure
