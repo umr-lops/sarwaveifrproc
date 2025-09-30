@@ -1,14 +1,17 @@
 import logging
-from pathlib import Path
-import hydra_zen
-import hydra
 import os
-import glob
-import numpy as np
-import sarwaveifrproc.utils as utils
-from dataclasses import dataclass
-import onnxruntime
 import re
+from dataclasses import dataclass
+from datetime import datetime
+from pathlib import Path
+
+import hydra
+import hydra_zen
+import numpy as np
+import onnxruntime
+from tqdm import tqdm
+
+import sarwaveifrproc.utils as utils
 
 
 @dataclass
@@ -35,8 +38,6 @@ class Prediction:
     attrs: dict[str, str]
 
 
-
-
 @dataclass
 class PredictedVariables:
     """
@@ -54,10 +55,10 @@ def main(
     product_id: str,
     models: dict[str, Model],
     predicted_variables: PredictedVariables,
-    supported_input_product_versions: list[str]=[],
+    supported_input_product_versions: list[str] = [],
     overwrite: bool = False,
     verbose: bool = False,
-    dry_run: bool = False
+    dry_run: bool = False,
 ):
     """
     Generate a L2 WAVE product from a L1B or L1C SAFE.
@@ -103,21 +104,41 @@ def main(
                 return None
 
         logging.info("Processing files...")
-        for f, output_safe in zip(files, output_safes):
+        for iix in tqdm(range(len(files))):
+            f = files[iix]
+            output_safe = output_safes[iix]
             name = Path(f).name
-            m = re.match(utils.VERS_SAFE_PATTERN, name)
-            if m is None or m.groupdict().get('version') not in supported_input_product_versions:
-                logging.warning(f'Unsupported product version for SAFE {name}')
-            if dry_run: continue
-            utils.process_files(
+            m = re.match(utils.SAFE_PATTERN, name)
+            if (
+                m is None
+                or m.groupdict().get("version") not in supported_input_product_versions
+            ) and iix == 0:
+                logging.warning(f"Unsupported product version for SAFE {name}")
+            if dry_run:
+                continue
+            files_in_error = utils.process_files(
                 f, output_safe, ort_mods, mod_outs, predicted_variables, product_id
             )
+            if len(files_in_error) > 0:
+                filout_error = os.path.join(
+                    "files_in_error_{}.txt".format(
+                        datetime.now().strftime("%Y%m%d_%H%M%S")
+                    )
+                )
+                logging.info(f"writting the list of files in error to  {filout_error}")
+                with open(filout_error, "w") as ff:
+                    ff.writelines("\n".join(files_in_error))
+            else:
+                logging.info("All provided SAFE have been processed successfuly.")
 
     else:
         name = Path(input_path).name
-        m = re.match(utils.VERS_SAFE_PATTERN, name)
-        if m is None or m.groupdict().get('version') not in supported_input_product_versions:
-            logging.warning(f'Unsupported product version for SAFE {name}')
+        m = re.match(utils.SAFE_PATTERN, name)
+        if (
+            m is None
+            or m.groupdict().get("version") not in supported_input_product_versions
+        ):
+            logging.warning(f"Unsupported product version for SAFE {name}")
         logging.info("Checking if output safe already exists...")
         output_safe = utils.get_output_safe(input_path, save_directory, product_id)
 
@@ -129,8 +150,13 @@ def main(
 
         logging.info("Processing files...")
         if not dry_run:
-            utils.process_files(
-                input_path, output_safe, ort_mods, mod_outs, predicted_variables, product_id
+            files_in_error = utils.process_files(
+                input_path,
+                output_safe,
+                ort_mods,
+                mod_outs,
+                predicted_variables,
+                product_id,
             )
 
     logging.info(f"Processing terminated. Output directory: \n{save_directory}")
@@ -142,17 +168,6 @@ def setup_logging(verbose=False):
     logging.basicConfig(
         level=level, format=fmt, datefmt="%d/%m/%Y %H:%M:%S", force=True
     )
-
-
-def get_files(dir_path, listing):
-
-    fn = []
-    for s in listing:
-        search_path = os.path.join(dir_path, s.replace("WAVE", "XSP_"), "*-?v-*.nc")
-        fn += glob.glob(search_path)
-
-    print("Number of files :", len(fn))
-    return fn
 
 
 hydra_main = hydra.main(

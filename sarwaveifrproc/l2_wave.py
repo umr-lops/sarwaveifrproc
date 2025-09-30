@@ -1,9 +1,8 @@
-import numpy as np
 import os
+
+import numpy as np
 import xarray as xr
 
-# import datatree as dtt
-from scipy import special
 import sarwaveifrproc
 
 attributes_missing_variables = {
@@ -32,7 +31,7 @@ def generate_l2_wave_product(xdt, models, models_outputs, predicted_variables):
     - models_outputs (dict[str, list]): list of variables predicted by each model
     - predicted_variables (dict[dict]):  variables to add to the product and corresponding model and output name
     Returns:
-    - l2_wave_product (dtt.DataTree): Level-2 wave product.
+    - l2_wave_product (xr.DataTree): Level-2 wave product.
 
     Notes:
     - The scaler objects should be one of StandardScaler, MinMaxScaler, or RobustScaler from sklearn.preprocessing.
