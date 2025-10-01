@@ -104,6 +104,7 @@ def main(
                 return None
 
         logging.info("Processing files...")
+        final_list_error = []
         for iix in tqdm(range(len(files))):
             f = files[iix]
             output_safe = output_safes[iix]
@@ -119,17 +120,18 @@ def main(
             files_in_error = utils.process_files(
                 f, output_safe, ort_mods, mod_outs, predicted_variables, product_id
             )
-            if len(files_in_error) > 0:
-                filout_error = os.path.join(
-                    "files_in_error_{}.txt".format(
-                        datetime.now().strftime("%Y%m%d_%H%M%S")
-                    )
+            final_list_error.extend(files_in_error)
+        if len(final_list_error) > 0:
+            filout_error = os.path.join(
+                "files_in_error_{}.txt".format(
+                    datetime.now().strftime("%Y%m%d_%H%M%S")
                 )
-                logging.info(f"writting the list of files in error to  {filout_error}")
-                with open(filout_error, "w") as ff:
-                    ff.writelines("\n".join(files_in_error))
-            else:
-                logging.info("All provided SAFE have been processed successfuly.")
+            )
+            logging.info(f"writting the list of files in error to  {filout_error}")
+            with open(filout_error, "w") as ff:
+                ff.writelines("\n".join(final_list_error))
+        else:
+            logging.info("All provided SAFE have been processed successfuly.")
 
     else:
         name = Path(input_path).name
