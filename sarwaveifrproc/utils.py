@@ -168,7 +168,7 @@ def process_files(
             savepath = get_output_filename(path, output_safe, product_id)
             l2_product.to_netcdf(savepath)
         except Exception:
-            logging.errror(traceback.format_exc())
+            logging.error(traceback.format_exc())
             logging.error(f"Error processing {path}. Skipping this file.")
             files_in_error.append(path)
             continue
