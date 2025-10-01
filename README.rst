@@ -32,7 +32,11 @@ Features
   - significant wave height (`Hs`)
   - mean wave period (`t0m1`)
   - significant wave height of the wind-sea (`pshs0`)
- * save results in a netCDF file per sub-swath.
+ * save results in a netCDF file per sub-swath (e.g. iw1, iw2, iw3). (the processor works at SAFE granularity.)
+
+ Disclaimer: this is not an official ESA product. 
+ The processor currently only use VV channel for predictions, then supported polarization are VV+VH and VV.
+
 
 Credits
 -------
